@@ -8,20 +8,20 @@ principal, number of years and rate of interest.
 int main()
 {
     float principal;
-    int time;
+    int year;
     int rate;
     float interest;
 
     printf("Enter the principal amount: ");
     scanf("%f", &principal);
 
-    printf("Enter the rate: ");
+    printf("Enter the year: ");
+    scanf("%d", &year);
+
+    printf("Enter the rate of interest: ");
     scanf("%d", &rate);
 
-    printf("Enter the time: ");
-    scanf("%d", &time);
-
-    interest = (principal * rate * time) / 100.0;
+    interest = ((principal * rate) * year) / 100.0;
     printf("The interest amount is: %.2f\n", interest);
     return 0;
 }
