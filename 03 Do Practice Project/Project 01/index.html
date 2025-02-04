@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <style>
+        /* Global Styling */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        /* Input and Button Styling */
+        .container {
+            background: #292929;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        input {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #444;
+            border-radius: 6px;
+            width: 100px;
+            text-align: center;
+            background: #222;
+            color: #fff;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        /* Message Styling */
+        #message {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-left: 5px;
+            border-radius: 50%;
+            background-color: white;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎯 Number Guessing Game</h1>
+    <div class="container">
+        <input type="number" id="guessInput" placeholder="Enter number">
+        <button onclick="submitGuess()">Submit</button>
+        <span id="loading" class="loading" style="display: none;"></span>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        function submitGuess() {
+            let userGuess = document.getElementById("guessInput").value;
+            let messageEl = document.getElementById("message");
+            let loadingEl = document.getElementById("loading");
+
+            if (!userGuess) {
+                messageEl.innerText = "⚠️ Please enter a number!";
+                messageEl.style.opacity = "1";
+                messageEl.style.transform = "translateY(0)";
+                return;
+            }
+
+            // Show loading effect
+            loadingEl.style.display = "inline-block";
+            messageEl.style.opacity = "0";
+
+            fetch("http://localhost:3000/guess?number=" + userGuess)
+                .then(response => response.text())
+                .then(data => {
+                    loadingEl.style.display = "none"; // Hide loading animation
+                    messageEl.innerText = data;
+                    messageEl.style.opacity = "1";
+                    messageEl.style.transform = "translateY(0)";
+
+                    // Change color based on the result
+                    if (data.includes("Higher")) {
+                        messageEl.style.color = "#f39c12"; // Orange for higher
+                    } else if (data.includes("Lower")) {
+                        messageEl.style.color = "#e74c3c"; // Red for lower
+                    } else {
+                        messageEl.style.color = "#2ecc71"; // Green for correct
+                    }
+                })
+                .catch(error => {
+                    loadingEl.style.display = "none";
+                    messageEl.innerText = "❌ Error connecting to server!";
+                    messageEl.style.color = "#ff3860";
+                    messageEl.style.opacity = "1";
+                    messageEl.style.transform = "translateY(0)";
+                    console.error(error);
+                });
+        }
+    </script>
+
+</body>
+
+</html>
